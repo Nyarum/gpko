@@ -15,15 +15,15 @@ type Client struct {
 }
 
 func NewClient(i *do.Injector) (Client, error) {
-	builder := do.MustInvoke[packets.Builder](i)
-
 	return Client{
-		builder: builder,
+		builder: do.MustInvoke[packets.Builder](i),
 	}, nil
 }
 
 func (client Client) Listen(c net.Conn) error {
-	res, err := client.builder.Build(out.NewDate())
+	res, err := client.builder.Build(
+		out.NewDate(),
+	)
 	if err != nil {
 		return err
 	}

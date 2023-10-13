@@ -18,46 +18,48 @@ type Auth struct {
 	ClientVersion uint16
 }
 
-func (a Auth) Read(in []byte) (Auth, error) {
+func NewAuth() *Auth {
+	return &Auth{}
+}
+
+func (a *Auth) Read(in []byte) error {
 	buf := bytes.NewBuffer(in)
 
 	err := utils.ReadPKO(buf, binary.BigEndian, &a.KeyLen)
 	if err != nil {
-		return Auth{}, err
+		return err
 	}
 	a.Key = buf.Next(int(a.KeyLen))
 
 	err = utils.ReadPKO(buf, binary.BigEndian, &a.Login)
 	if err != nil {
-		return Auth{}, err
+		return err
 	}
 
 	err = utils.ReadPKO(buf, binary.BigEndian, &a.PasswordLen)
 	if err != nil {
-		return Auth{}, err
+		return err
 	}
 	a.Password = buf.Next(int(a.PasswordLen))
 
 	err = utils.ReadPKO(buf, binary.BigEndian, &a.MAC)
 	if err != nil {
-		return Auth{}, err
+		return err
 	}
 
 	err = utils.ReadPKO(buf, binary.BigEndian, &a.IsCheat)
 	if err != nil {
-		return Auth{}, err
+		return err
 	}
 
 	err = utils.ReadPKO(buf, binary.BigEndian, &a.ClientVersion)
 	if err != nil {
-		return Auth{}, err
+		return err
 	}
 
-	fmt.Println(a)
-
-	return Auth{}, nil
+	return nil
 }
 
-func (a Auth) Handle() {
+func (a *Auth) Handle() {
 	fmt.Println(a)
 }

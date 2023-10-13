@@ -12,8 +12,8 @@ type Outcome interface {
 	Opcode() Opcode
 }
 
-type Income[T any] interface {
-	Read(in []byte) (T, error)
+type Income interface {
+	Read(in []byte) error
 	Handle()
 }
 
@@ -54,7 +54,7 @@ func (b Builder) Build(out Outcome) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (b Builder) Unbuild(in []byte) (interface{}, error) {
+func (b Builder) Unbuild(in []byte) (Income, error) {
 	buf := bytes.NewBuffer(in)
 
 	var (
@@ -78,7 +78,7 @@ func (b Builder) Unbuild(in []byte) (interface{}, error) {
 		return nil, err
 	}
 
-	income := SwitchInPackets[Opcode(opcode)]
+	income := SwitchInPackets[Opcode(opcode)]()
 	err = income.Read(buf.Next(int(ln - 8)))
 	if err != nil {
 		return nil, err
